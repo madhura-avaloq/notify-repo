@@ -1,0 +1,47 @@
+name: Send Microsoft Teams Notification
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+env:
+  MS_TEAMS_WEBHOOK_URL: https://avaloqgroup.webhook.office.com/webhookb2/acc69694-4513-4770-9275-42f898a52f96@2ba8a4bf-3d7a-478b-b8d1-85cae49436ef/IncomingWebhook/ee99d20a71df4bb7993376f96e8a7427/9be00cee-8615-47cd-acdb-537181146f7d/V2vqRicQ0PbEBM-ImL6GUIwMByEgr2iZbJBdhuJXvNOV41
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Run Build Command
+        run: |
+          echo "Building the project..."
+        #   exit 1
+        # continue-on-error: true
+
+  send_notification:
+    runs-on: ubuntu-latest
+    needs: build  # This job depends on the 'build' job
+    steps:
+      # Success Notification
+      - name: Send Success Notification
+        if: success()  #  'build' job succeeds
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "::set-output name=message::$COMMIT_MESSAGE"
+  
+          curl -X POST -H "Content-Type: application/json" \
+          -d "{\"text\": $COMMIT_MESSAGE}" \
+          $MS_TEAMS_WEBHOOK_URL
+
+      # Failure Notification
+      # - name: Send Failure Notification
+      #   if: failure()  # 'build' job fails
+      #   run: |
+      #     MESSAGE="Error Occurred!! Please check the logs."
+
+      #     curl -X POST -H "Content-Type: application/json" \
+      #       -d "{\"text\": \"$MESSAGE\"}" \
+      #       $MS_TEAMS_WEBHOOK_URL
