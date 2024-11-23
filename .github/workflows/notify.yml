@@ -23,23 +23,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: build  # This job depends on the 'build' job
     steps:
-
-      #GH_token
-      - name: Authenticate with GitHub CLI
-        env:
-          GH_TOKEN: ${{ github.token }}  # Automatically provides the GitHub token
-        run: |
-          gh auth login --with-token <<< "${GH_TOKEN}"
-        
       # Success Notification
       - name: Send Success Notification
         if: success()  #  'build' job succeeds
         run: |
-          COMMIT_MESSAGE=$(gh run watch)
+          COMMIT_MESSAGE="commit"
           echo "::set-output name=message::$COMMIT_MESSAGE"
   
           curl -X POST -H "Content-Type: application/json" \
-          -d "{\"text\": $COMMIT_MESSAGE}" \
+          -d "{\"text\": \"$COMMIT_MESSAGE\"}" \
           $MS_TEAMS_WEBHOOK_URL
 
       # Failure Notification
