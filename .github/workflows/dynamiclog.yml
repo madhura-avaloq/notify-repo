@@ -1,8 +1,8 @@
-name: Send Microsoft Teams Notification
+name: Watch GitHub  Actions.
 
 on:
   workflow_run:
-    workflows: ["notify"]
+    workflows: [Send Microsoft Teams Notification]
     types:
       - completed
 
