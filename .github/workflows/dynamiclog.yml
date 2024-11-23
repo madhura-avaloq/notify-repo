@@ -2,7 +2,7 @@ name: Watch GitHub Actions and Send to Teams
 
 on:
   workflow_run:
-    workflows: [notify] # The name of the workflow you're watching
+    workflows: ["notify"] # The name of the workflow you're watching
     types:
       - completed
  
