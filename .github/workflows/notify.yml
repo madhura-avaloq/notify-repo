@@ -18,20 +18,20 @@ jobs:
         run: |
           echo "Building the project..."
 
-  send_notification:
-    runs-on: ubuntu-latest
-    needs: build  # This job depends on the 'build' job
-    steps:
-      # Success Notification
-      - name: Send Success Notification
-        if: success()  #  'build' job succeeds
-        run: |
-          COMMIT_MESSAGE="commit"
-          echo "::set-output name=message::$COMMIT_MESSAGE"
+  # send_notification:
+  #   runs-on: ubuntu-latest
+  #   needs: build  # This job depends on the 'build' job
+  #   steps:
+  #     # Success Notification
+  #     - name: Send Success Notification
+  #       if: success()  #  'build' job succeeds
+  #       run: |
+  #         COMMIT_MESSAGE="commit"
+  #         echo "::set-output name=message::$COMMIT_MESSAGE"
   
-          curl -X POST -H "Content-Type: application/json" \
-          -d "{\"text\": \"$COMMIT_MESSAGE\"}" \
-          $MS_TEAMS_WEBHOOK_URL
+  #         curl -X POST -H "Content-Type: application/json" \
+  #         -d "{\"text\": \"$COMMIT_MESSAGE\"}" \
+  #         $MS_TEAMS_WEBHOOK_URL
 
       # Failure Notification
       # - name: Send Failure Notification
@@ -42,3 +42,44 @@ jobs:
       #     curl -X POST -H "Content-Type: application/json" \
       #       -d "{\"text\": \"$MESSAGE\"}" \
       #       $MS_TEAMS_WEBHOOK_URL
+
+    - name: Check out the repository
+      uses: actions/checkout@v3
+
+    - name: Set up GitHub CLI (gh)
+      run: |
+        sudo apt-get install gh
+
+    - name: Authenticate with GitHub CLI using github.token
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh auth login --with-token <<< "${GH_TOKEN}"
+
+    - name: Watch the workflow run
+      id: watch_run
+      run: |
+       # Watch the workflow run and capture the output
+        output=$(gh run watch --json conclusion,workflow,run_number -q '.workflow_runs[0].conclusion')
+        echo "Output: $output"
+        echo "::set-output name=result::$output"
+
+    - name: Send notification to Microsoft Teams
+      if: success() || failure()
+      env:
+        TEAMS_WEBHOOK_URL: https://avaloqgroup.webhook.office.com/webhookb2/acc69694-4513-4770-9275-42f898a52f96@2ba8a4bf-3d7a-478b-b8d1-85cae49436ef/IncomingWebhook/ee99d20a71df4bb7993376f96e8a7427/9be00cee-8615-47cd-acdb-537181146f7d/V2vqRicQ0PbEBM-ImL6GUIwMByEgr2iZbJBdhuJXvNOV41
+      run: |
+        # Get the result from the previous step
+        result="${{ steps.watch_run.outputs.result }}"
+        
+        # Prepare the message
+        if [ "$result" == "success" ]; then
+          status="successful"
+        else
+          status="failed"
+        fi
+
+        # Send the message to Teams
+        curl -H "Content-Type: application/json" \
+             -d "{\"text\": \"The workflow run has $status. Result: $result\"}" \
+             "$TEAMS_WEBHOOK_URL"
