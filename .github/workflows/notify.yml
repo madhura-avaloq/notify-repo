@@ -25,11 +25,11 @@ jobs:
     steps:
 
       #GH_token
-       name: Authenticate with GitHub CLI
-      env:
-        GH_TOKEN: ${{ github.token }}  # Automatically provides the GitHub token
-      run: |
-        gh auth login --with-token <<< "${GH_TOKEN}"
+      - name: Authenticate with GitHub CLI
+        env:
+          GH_TOKEN: ${{ github.token }}  # Automatically provides the GitHub token
+        run: |
+          gh auth login --with-token <<< "${GH_TOKEN}"
         
       # Success Notification
       - name: Send Success Notification
