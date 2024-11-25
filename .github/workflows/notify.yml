@@ -12,36 +12,58 @@ jobs:
   build: 
     runs-on: ubuntu-latest
     steps:
-
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Run Build Command
-        run: |
-          echo "Building the project.."
 
-      - name: Build something 
+      - name: Create a file to upload
         run: |
-          echo "Building..."
-          echo "This is a test file." > test.txt
+          mkdir output
+          echo "This is a test file." > output/test.txt
 
-      - name: Upload build artifacts
+      - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: my-artifact-name
-          path: .github/workflows/
+          path: output/
 
-      - name: Authenticate with GitHub CLI using github.token
-        # env:
-        #   GH_TOKEN: ${{ secrets.my_token }}
+      - name: List artifacts to confirm upload
         run: |
-          gh auth login --with-token
+          gh run artifacts ${GITHUB_RUN_ID}
 
-      - name: Watch the workflow run
-        id: watch_run
+      - name: Download the artifact
         run: |
-          output=$(gh run download ${GITHUB_RUN_ID} -n my-artifact-name)
-          echo "Output: $output"
-          echo "result=$output" >> $GITHUB_ENV
+          gh run download ${GITHUB_RUN_ID} --artifact my-artifact-name
+
+
+      # - name: Checkout Code
+      #   uses: actions/checkout@v3
+      # - name: Run Build Command
+      #   run: |
+      #     echo "Building the project.."
+
+      # - name: Build something 
+      #   run: |
+      #     echo "Building..."
+      #     echo "This is a test file." > test.txt
+
+      # - name: Upload build artifacts
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: my-artifact-name
+      #     path: .github/workflows/
+
+      # - name: Authenticate with GitHub CLI using github.token
+      #   # env:
+      #   #   GH_TOKEN: ${{ secrets.my_token }}
+      #   run: |
+      #     gh auth login --with-token
+
+      # - name: Watch the workflow run
+      #   id: watch_run
+      #   run: |
+      #     output=$(gh run download ${GITHUB_RUN_ID} -n my-artifact-name)
+      #     echo "Output: $output"
+      #     echo "result=$output" >> $GITHUB_ENV
 
       - name: Send notification to Microsoft Teams
         if: success() || failure()
