@@ -11,6 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact-name
+          path: .github/workflows 
+                
       - name: Check out the repository
         uses: actions/checkout@v3
 
