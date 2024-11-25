@@ -20,7 +20,7 @@ jobs:
 
       - name: Authenticate with GitHub CLI using github.token
         env:
-          GH_TOKEN: "${{ github.token }}"
+          GH_TOKEN: ${{ secrets.my_token }}
         run: |
           gh auth login --with-token
 
@@ -46,5 +46,3 @@ jobs:
           curl -H "Content-Type: application/json" \
                -d "{\"text\": \"The workflow run has $status. Result: $result\"}" \
                "$TEAMS_WEBHOOK_URL"
-
-
