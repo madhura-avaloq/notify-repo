@@ -39,7 +39,7 @@ jobs:
       - name: Watch the workflow run
         id: watch_run
         run: |
-          output=$(gh run download ${GITHUB_RUN_ID})
+          output=$(gh run download ${GITHUB_RUN_ID}  --artifact my-artifact-name)
           echo "Output: $output"
           echo "result=$output" >> $GITHUB_ENV
 
