@@ -5,7 +5,7 @@ on:
     workflows: [Send Microsoft Teams Notification]
     types:
       - completed
- 
+
 jobs:
   watch-job:
     runs-on: ubuntu-latest
@@ -19,10 +19,10 @@ jobs:
           sudo apt-get install gh
 
       - name: Authenticate with GitHub CLI using github.token
-        env: 
+        env:
           GH_TOKEN: "${{ github.token }}"
         run: |
-          echo "${GH_TOKEN}" | gh auth login --with-token
+          gh auth login --with-token
 
       - name: Watch the workflow run
         id: watch_run
