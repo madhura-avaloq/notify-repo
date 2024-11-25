@@ -22,7 +22,6 @@ jobs:
       - name: Build something 
         run: |
           echo "Building..."
-          mkdir output
           echo "This is a test file." > output/test.txt
 
       - name: Upload build artifacts
@@ -30,7 +29,7 @@ jobs:
         with:
           name: my-artifact-name
           path: output/ 
-          
+
       - name: Authenticate with GitHub CLI using github.token
         # env:
         #   GH_TOKEN: ${{ secrets.my_token }}
