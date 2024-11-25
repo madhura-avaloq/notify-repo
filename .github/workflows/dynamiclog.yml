@@ -24,12 +24,12 @@ jobs:
         run: |
           gh auth login --with-token
 
-      - name: Watch the workflow run
-        id: watch_run
-        run: |
-          output=$(gh run watch --json conclusion,workflow,run_number -q '.workflow_runs[0].conclusion')
-          echo "Output: $output"
-          echo "result=$output" >> $GITHUB_ENV
+      # - name: Watch the workflow run
+      #   id: watch_run
+      #   run: |
+      #     output=$(gh run watch --json conclusion,workflow,run_number -q '.workflow_runs[0].conclusion')
+      #     echo "Output: $output"
+      #     echo "result=$output" >> $GITHUB_ENV
 
       # - name: Send notification to Microsoft Teams
       #   if: success() || failure()
