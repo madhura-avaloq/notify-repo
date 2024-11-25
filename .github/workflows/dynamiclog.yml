@@ -31,18 +31,38 @@ jobs:
           echo "Output: $output"
           echo "result=$output" >> $GITHUB_ENV
 
-      - name: Send notification to Microsoft Teams
-        if: success() || failure()
-        env:
-          TEAMS_WEBHOOK_URL: https://avaloqgroup.webhook.office.com/webhookb2/acc69694-4513-4770-9275-42f898a52f96@2ba8a4bf-3d7a-478b-b8d1-85cae49436ef/IncomingWebhook/ee99d20a71df4bb7993376f96e8a7427/9be00cee-8615-47cd-acdb-537181146f7d/V2vqRicQ0PbEBM-ImL6GUIwMByEgr2iZbJBdhuJXvNOV41
-        run: |
-          result="${{ env.result }}"
-          if [ "$result" == "success" ]; then
-            status="successful"
-          else
-            status="failed"
-          fi
+      # - name: Send notification to Microsoft Teams
+      #   if: success() || failure()
+      #   env:
+      #     TEAMS_WEBHOOK_URL: https://avaloqgroup.webhook.office.com/webhookb2/acc69694-4513-4770-9275-42f898a52f96@2ba8a4bf-3d7a-478b-b8d1-85cae49436ef/IncomingWebhook/ee99d20a71df4bb7993376f96e8a7427/9be00cee-8615-47cd-acdb-537181146f7d/V2vqRicQ0PbEBM-ImL6GUIwMByEgr2iZbJBdhuJXvNOV41
+      #   run: |
+      #     result="${{ env.result }}"
+      #     if [ "$result" == "success" ]; then
+      #       status="successful"
+      #     else
+      #       status="failed"
+      #     fi
 
-          curl -H "Content-Type: application/json" \
-               -d "{\"text\": \"The workflow run has $status. Result: $result\"}" \
-               "$TEAMS_WEBHOOK_URL"
+      #     curl -H "Content-Type: application/json" \
+      #          -d "{\"text\": \"The workflow run has $status. Result: $result\"}" \
+      #          "$TEAMS_WEBHOOK_URL"
+
+      - name: Send logs to Teams
+        if: always() # Run this step even if previous steps fail
+        run: |
+          # Capture logs from the current workflow run
+          LOGS=$(cat $GITHUB_STEP_SUMMARY)
+
+          # Create a JSON payload with the logs
+          PAYLOAD=$(cat <<EOF
+          {
+            "text": "GitHub Action Logs: \n\n$LOGS"
+          }
+          EOF
+          )
+
+          # Send the logs to Teams via the Incoming Webhook
+          curl -X POST -H 'Content-Type: application/json' -d "$PAYLOAD" https://avaloqgroup.webhook.office.com/webhookb2/acc69694-4513-4770-9275-42f898a52f96@2ba8a4bf-3d7a-478b-b8d1-85cae49436ef/IncomingWebhook/ee99d20a71df4bb7993376f96e8a7427/9be00cee-8615-47cd-acdb-537181146f7d/V2vqRicQ0PbEBM-ImL6GUIwMByEgr2iZbJBdhuJXvNOV41
+
+    env:
+      TEAMS_WEBHOOK_URL: https://avaloqgroup.webhook.office.com/webhookb2/acc69694-4513-4770-9275-42f898a52f96@2ba8a4bf-3d7a-478b-b8d1-85cae49436ef/IncomingWebhook/ee99d20a71df4bb7993376f96e8a7427/9be00cee-8615-47cd-acdb-537181146f7d/V2vqRicQ0PbEBM-ImL6GUIwMByEgr2iZbJBdhuJXvNOV41
