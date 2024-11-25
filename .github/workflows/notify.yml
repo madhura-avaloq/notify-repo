@@ -17,30 +17,6 @@ jobs:
       - name: Run Build Command
         run: |
           echo "Building the project.."
-  #
-  # send_notification:
-  #   runs-on: ubuntu-latest
-  #   needs: build  # This job depends on the 'build' job
-  #   steps:
-  #     # Success Notification
-  #     - name: Send Success Notification
-  #       if: success()  #  'build' job succeeds
-  #       run: |
-  #         COMMIT_MESSAGE="commit"
-  #         echo "::set-output name=message::$COMMIT_MESSAGE"
   
-  #         curl -X POST -H "Content-Type: application/json" \
-  #         -d "{\"text\": \"$COMMIT_MESSAGE\"}" \
-  #         $MS_TEAMS_WEBHOOK_URL
-
-      # Failure Notification
-      # - name: Send Failure Notification
-      #   if: failure()  # 'build' job fails
-      #   run: |
-      #     MESSAGE="Error Occurred!! Please check the logs."
-
-      #     curl -X POST -H "Content-Type: application/json" \
-      #       -d "{\"text\": \"$MESSAGE\"}" \
-      #       $MS_TEAMS_WEBHOOK_URL
-
+ 
  
