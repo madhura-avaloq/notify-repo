@@ -20,7 +20,7 @@ jobs:
 
       - name: Authenticate with GitHub CLI using github.token
         env: 
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: "${{ github.token }}"
         run: |
           echo "${GH_TOKEN}" | gh auth login --with-token
 
