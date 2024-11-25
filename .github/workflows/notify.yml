@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: my-artifact-name
-          path: output/ 
+          path: .github/workflows/test.txt
 
       - name: Authenticate with GitHub CLI using github.token
         # env:
