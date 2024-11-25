@@ -12,17 +12,25 @@ jobs:
   build: 
     runs-on: ubuntu-latest
     steps:
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: my-artifact-name
-          path: .github/workflows 
 
       - name: Checkout Code
         uses: actions/checkout@v3
       - name: Run Build Command
         run: |
           echo "Building the project.."
-  
- 
+
+      - name: Build something 
+        run: |
+          echo "Building..."
+          mkdir output
+          echo "This is a test file." > output/test.txt
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact-name
+          path: output/ 
+
+      
+
  
